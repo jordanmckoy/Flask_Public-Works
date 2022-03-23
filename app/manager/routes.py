@@ -4,7 +4,7 @@ from sqlalchemy import false
 from app.employee import blueprint
 from flask import redirect, render_template, request, url_for
 from flask_login import login_required
-from app.auth.models import Complaint, Employee, Assigned,TempEmployee, RegEmployee, Phone, Job, Users
+from app.models import Complaint, Employee, Assigned,TempEmployee, RegEmployee, Phone, Job, Users
 from flask_login import current_user
 from app import db
 from wtforms import DateField, RadioField
@@ -463,6 +463,30 @@ def assign_employee(id):
             db.session.commit()
             return redirect(url_for('home_blueprint.manage_jobs'))
         return render_template('manager/assign-job.html', success=false, form=form, employees=employee_list)
+    else:
+        return redirect(url_for('home_blueprint.employee_index'))
+
+@blueprint.route('/manage-complaints')
+@login_required
+def manage_complaints():
+    user = Users.query.filter_by(TRN=current_user.TRN).first()
+    if user.manager == True:
+        complaints = Complaint.query.filter(Complaint.fk_resident != None).all()
+        return render_template('manager/complaints.html',jobs_complaints=complaints)        
+    else:
+        return redirect(url_for('home_blueprint.employee_index'))
+
+@blueprint.route('/view-complaints/<string:id>/<string:resident>/<string:date>')
+@login_required
+def view_complaints(id,resident,date):
+    user = Users.query.filter_by(TRN=current_user.TRN).first()
+    if user.manager == True:
+        complaints = Complaint.query.filter_by(fk_job=id, fk_resident=resident,date=date).first()
+        job = complaints.fk_job
+        date = complaints.date
+        resident = complaints.fk_resident
+        complaint = complaints.content
+        return render_template('manager/view-complaints.html', job=job,date=date,resident=resident,complaint=complaint)
     else:
         return redirect(url_for('home_blueprint.employee_index'))
 
