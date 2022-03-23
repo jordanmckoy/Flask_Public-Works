@@ -1,11 +1,8 @@
-from flask_wtf import FlaskForm
-from sqlalchemy import false
 from app.employee import blueprint
 from flask import render_template
 from flask_login import login_required
 from app.models import Employee, Assigned, TempEmployee, RegEmployee, Phone, Job, Users
 from flask_login import current_user
-from app import db
 
 @blueprint.route('/employee-index')
 @login_required
