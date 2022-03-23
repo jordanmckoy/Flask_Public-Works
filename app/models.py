@@ -10,9 +10,8 @@ class Users(db.Model, UserMixin):
 
     __tablename__ = 'Users'
 
-    id = db.Column(db.Integer, primary_key=True)
-    TRN = db.Column(db.String(length=9), db.ForeignKey(
-        'employee.trn', ondelete='CASCADE'))
+    trn = db.Column(db.String(length=9), db.ForeignKey(
+        'employee.trn', ondelete='CASCADE', primary_key=True))
     email = db.Column(db.String(64), unique=True)
     password = db.Column(db.LargeBinary)
     manager = db.Column(db.Boolean, default=False, nullable=False)
