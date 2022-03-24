@@ -11,7 +11,7 @@ class Users(db.Model, UserMixin):
     __tablename__ = 'Users'
 
     trn = db.Column(db.String(length=9), db.ForeignKey(
-        'employee.trn', ondelete='CASCADE', primary_key=True))
+        'employee.trn', ondelete='CASCADE'), primary_key=True)
     email = db.Column(db.String(64), unique=True)
     password = db.Column(db.LargeBinary)
     manager = db.Column(db.Boolean, default=False, nullable=False)
@@ -30,7 +30,7 @@ class Users(db.Model, UserMixin):
             setattr(self, property, value)
 
     def __repr__(self):
-        return str(self.TRN)
+        return str(self.trn)
 
 
 class Employee(db.Model):
@@ -137,6 +137,6 @@ def user_loader(id):
 
 @login_manager.request_loader
 def request_loader(request):
-    TRN = request.form.get('TRN')
-    user = Users.query.filter_by(TRN=TRN).first()
+    trn = request.form.get('trn')
+    user = Users.query.filter_by(trn=trn).first()
     return user if user else None

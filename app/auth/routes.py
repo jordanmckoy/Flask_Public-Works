@@ -19,11 +19,11 @@ def login():
     if 'login' in request.form:
 
         # read form data
-        TRN = request.form['TRN']
+        user = request.form['trn']
         password = request.form['password']
 
         # Locate user
-        user = Users.query.filter_by(TRN=TRN).first()
+        user = Users.query.filter_by(trn=user).first()
 
         # Check the password
         if user and verify_pass(password, user.password):
@@ -32,12 +32,12 @@ def login():
             return redirect(url_for('home_blueprint.employee_index'))
 
         # Something (user or pass) is not ok
-        return render_template('accounts/login.html',
+        return render_template('auth/login.html',
                                msg='Wrong user or password',
                                form=login_form)
 
     if not current_user.is_authenticated:
-        return render_template('accounts/login.html',
+        return render_template('auth/login.html',
                                form=login_form)
     return redirect(url_for('home_blueprint.employee_index'))
 
@@ -47,27 +47,27 @@ def register():
     create_account_form = CreateAccountForm(request.form)
     if 'register' in request.form:
 
-        TRN = request.form['TRN']
+        user = request.form['trn']
         email = request.form['email']
 
         # Check usename exists
-        user = Users.query.filter_by(TRN=TRN).first()
-        employee = Employee.query.filter_by(trn=TRN).first()
+        user = Users.query.filter_by(trn=user).first()
+        employee = Employee.query.filter_by(trn=user).first()
         if user:
-            return render_template('accounts/register.html',
+            return render_template('auth/register.html',
                                    msg='TRN already registered',
                                    success=False,
                                    form=create_account_form)
         elif not employee:
-            return render_template('accounts/register.html',
-                                   msg=f'{TRN}, Is not an employee',
+            return render_template('auth/register.html',
+                                   msg=f'{user}, Is not an employee',
                                    success=False,
                                    form=create_account_form)
 
         # Check email exists
         user = Users.query.filter_by(email=email).first()
         if user:
-            return render_template('accounts/register.html',
+            return render_template('auth/register.html',
                                    msg='Email already registered',
                                    success=False,
                                    form=create_account_form)
@@ -77,13 +77,13 @@ def register():
         db.session.add(user)
         db.session.commit()
 
-        return render_template('accounts/register.html',
+        return render_template('auth/register.html',
                                msg='User created please <a href="/login">login</a>',
                                success=True,
                                form=create_account_form)
 
     else:
-        return render_template('accounts/register.html', form=create_account_form)
+        return render_template('auth/register.html', form=create_account_form)
 
 
 @blueprint.route('/auth/logout')

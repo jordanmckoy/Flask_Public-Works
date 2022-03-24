@@ -60,25 +60,26 @@ def jobs():
     return render_template('home/job.html', segment='index', jobs_assigned=jobs_assigned)
 
 
-@blueprint.route('/my-profile')
+@blueprint.route('/employee/profile')
 @login_required
 def profile():
-    user = current_user.TRN
-    employee = Employee.query.filter_by(trn=user).first()
-    first_name = employee.first_name
-    last_name = employee.last_name
-    address = f'{employee.street_num} {employee.street_name}'
-    city = employee.city
-    parish = employee.parish
-    phone = Phone.query.filter(Phone.fk_trn == current_user.TRN)
-    if employee.street_num == None:
-        address = f'{employee.street_name}'
-        return render_template('home/profile.html', segment='index', phone=phone, user=user, employee=employee, first_name=first_name, last_name=last_name, address=address, parish=parish, city=city)
-    return render_template('home/profile.html', segment='index', phone=phone, user=user, employee=employee, first_name=first_name, last_name=last_name, address=address, parish=parish, city=city)
+    # user = current_user.TRN
+    # employee = Employee.query.filter_by(trn=user).first()
+    # first_name = employee.first_name
+    # last_name = employee.last_name
+    # address = f'{employee.street_num} {employee.street_name}'
+    # city = employee.city
+    # parish = employee.parish
+    # phone = Phone.query.filter(Phone.fk_trn == current_user.TRN)
+    # if employee.street_num == None:
+    #     address = f'{employee.street_name}'
+    #     return render_template('home/profile.html', segment='index', phone=phone, user=user, employee=employee, first_name=first_name, last_name=last_name, address=address, parish=parish, city=city)
+    # return render_template('home/profile.html', segment='index', phone=phone, user=user, employee=employee, first_name=first_name, last_name=last_name, address=address, parish=parish, city=city)
+    return render_template('employee/profile.html', segment='settings')
 
 @blueprint.route('/view-job/<string:id>')
 @login_required
-def view_job(id):
+def view_my_job(id):
     job = Job.query.filter_by(ref_number=id).first()
     if job.street_num:
         address = f'{job.street_num} {job.street_name} {job.city} {job.parish}'
