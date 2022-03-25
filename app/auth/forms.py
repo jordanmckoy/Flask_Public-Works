@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, StringField
+from wtforms import StringField, PasswordField, StringField, IntegerField
 from wtforms.validators import Email, DataRequired
 
 # login and registration
@@ -15,7 +15,7 @@ class LoginForm(FlaskForm):
 
 
 class CreateAccountForm(FlaskForm):
-    trn = StringField('trn',
+    trn = IntegerField('trn',
                       id='trn_create',
                       validators=[DataRequired()])
     email = StringField('Email',

@@ -19,11 +19,11 @@ def login():
     if 'login' in request.form:
 
         # read form data
-        user = request.form['trn']
+        form_id = request.form['trn']
         password = request.form['password']
 
         # Locate user
-        user = Users.query.filter_by(trn=user).first()
+        user = Users.query.filter_by(id=form_id).first()
 
         # Check the password
         if user and verify_pass(password, user.password):
@@ -45,27 +45,27 @@ def login():
 @blueprint.route('/auth/register', methods=['GET', 'POST'])
 def register():
     create_account_form = CreateAccountForm(request.form)
-    if 'register' in request.form:
+    if "POST" in request.method:
 
-        user = request.form['trn']
-        email = request.form['email']
+        form_user = request.form['trn']
+        form_email = request.form['email']
 
         # Check usename exists
-        user = Users.query.filter_by(trn=user).first()
-        employee = Employee.query.filter_by(trn=user).first()
+        user = Users.query.filter_by(id=form_user).first()
+        employee = Employee.query.filter_by(trn=form_user).first()
         if user:
             return render_template('auth/register.html',
                                    msg='TRN already registered',
                                    success=False,
                                    form=create_account_form)
-        elif not employee:
+        if not employee:
             return render_template('auth/register.html',
-                                   msg=f'{user}, Is not an employee',
+                                   msg=f'{form_user}, Is not an employee',
                                    success=False,
                                    form=create_account_form)
 
         # Check email exists
-        user = Users.query.filter_by(email=email).first()
+        user = Users.query.filter_by(email=form_email).first()
         if user:
             return render_template('auth/register.html',
                                    msg='Email already registered',

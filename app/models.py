@@ -10,7 +10,7 @@ class Users(db.Model, UserMixin):
 
     __tablename__ = 'Users'
 
-    trn = db.Column(db.String(length=9), db.ForeignKey(
+    id = db.Column(db.String(length=9), db.ForeignKey(
         'employee.trn', ondelete='CASCADE'), primary_key=True)
     email = db.Column(db.String(64), unique=True)
     password = db.Column(db.LargeBinary)
@@ -138,5 +138,5 @@ def user_loader(id):
 @login_manager.request_loader
 def request_loader(request):
     trn = request.form.get('trn')
-    user = Users.query.filter_by(trn=trn).first()
+    user = Users.query.filter_by(id=trn).first()
     return user if user else None

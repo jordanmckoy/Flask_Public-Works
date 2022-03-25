@@ -12,10 +12,10 @@ from wtforms.validators import DataRequired
 from app.manager.forms import CreateEmployee, CreateJob, EndJob, PromoteRegularForm, PromoteTemporaryForm
 
 
-@blueprint.route('/manager')
+@blueprint.route('/manager/dashboard')
 @login_required
 def manager():
-    user = Users.query.filter_by(TRN=current_user.TRN).first()
+    user = Users.query.filter_by(trn=current_user.trn).first()
     if user.manager == True:
         # msg = Message('A User Has Accessed the Manager Console',
         #               sender='noreply@publicworks.com', recipients=['jordan.bmp.mckoy@gmail.com'])
@@ -27,7 +27,7 @@ def manager():
         name = f'{employee.first_name} {employee.last_name}'
         count_employees = Employee.query.count()
         count_complaints = Complaint.query.count()
-        return render_template('manager/manager-index.html', segment='index', count_jobs=count_jobs, count_employees=count_employees, count_complaints=count_complaints,name=name)
+        return render_template('manager/dashboard.html', segment='index', count_jobs=count_jobs, count_employees=count_employees, count_complaints=count_complaints,name=name)
     else:
         return redirect(url_for('home_blueprint.employee_index'))
 
