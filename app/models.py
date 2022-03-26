@@ -10,7 +10,7 @@ class Users(db.Model, UserMixin):
 
     __tablename__ = 'Users'
 
-    id = db.Column(db.String(length=9), db.ForeignKey(
+    trn = db.Column(db.String(length=9), db.ForeignKey(
         'employee.trn', ondelete='CASCADE'), primary_key=True)
     email = db.Column(db.String(64), unique=True)
     password = db.Column(db.LargeBinary)
@@ -131,12 +131,12 @@ class Complaint(db.Model):
     content = db.Column(db.Text(), nullable=False)
 
 @login_manager.user_loader
-def user_loader(id):
-    return Users.query.filter_by(id=id).first()
+def user_loader(trn):
+    return Users.query.filter_by(trn=trn).first()
 
 
 @login_manager.request_loader
 def request_loader(request):
     trn = request.form.get('trn')
-    user = Users.query.filter_by(id=trn).first()
+    user = Users.query.filter_by(trn=trn).first()
     return user if user else None

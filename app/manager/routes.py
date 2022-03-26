@@ -1,7 +1,7 @@
 from flask_mail import Message
 from flask_wtf import FlaskForm
 from sqlalchemy import false
-from app.employee import blueprint
+from app.manager import blueprint
 from flask import redirect, render_template, request, url_for
 from flask_login import login_required
 from app.models import Complaint, Employee, Assigned,TempEmployee, RegEmployee, Phone, Job, Users
@@ -42,10 +42,10 @@ def manage_jobs():
         return redirect(url_for('home_blueprint.employee_index'))
 
 
-@blueprint.route('/view-job/<string:id>')
+@blueprint.route('/view-job/<string:trn>')
 @login_required
-def view_job(id):
-    job = Job.query.filter_by(ref_number=id).first()
+def view_job(trn):
+    job = Job.query.filter_by(ref_number=trn).first()
     if job.street_num:
         address = f'{job.street_num} {job.street_name} {job.city} {job.parish}'
     else:
@@ -407,12 +407,12 @@ def addjobs():
         return redirect(url_for('home_blueprint.employee_index'))
 
 
-@ blueprint.route('/delete-job/<string:id>')
+@ blueprint.route('/delete-job/<string:trn>')
 @ login_required
-def delete_job(id):
+def delete_job(trn):
     user = Users.query.filter_by(TRN=current_user.TRN).first()
     if user.manager == True:
-        job_to_delete = Job.query.filter_by(ref_number=id).first()
+        job_to_delete = Job.query.filter_by(ref_number=trn).first()
         db.session.delete(job_to_delete)
         db.session.commit()
         return redirect(url_for('home_blueprint.manage_jobs'))
@@ -420,15 +420,15 @@ def delete_job(id):
         return redirect(url_for('home_blueprint.employee_index'))
 
 
-@ blueprint.route('/end-job/<string:id>', methods=['GET', 'POST'])
+@ blueprint.route('/end-job/<string:trn>', methods=['GET', 'POST'])
 @ login_required
-def end_job(id):
+def end_job(trn):
     user = Users.query.filter_by(TRN=current_user.TRN).first()
     if user.manager == True:
         form = EndJob(request.form)
         if 'add' in request.form:
             end_date = request.form['end_date']
-            end_job = Job.query.filter_by(ref_number=id).update(
+            end_job = Job.query.filter_by(ref_number=trn).update(
                 dict(job_end_date=end_date))
             db.session.commit()
             return redirect(url_for('home_blueprint.manage_jobs'))
@@ -437,9 +437,9 @@ def end_job(id):
         return redirect(url_for('home_blueprint.employee_index'))
 
 
-@blueprint.route('assign-employees/<string:id>', methods=['Get', 'POST'])
+@blueprint.route('assign-employees/<string:trn>', methods=['Get', 'POST'])
 @login_required
-def assign_employee(id):
+def assign_employee(trn):
     user = Users.query.filter_by(TRN=current_user.TRN).first()
     if user.manager == True:
         employee_list = Employee.query.filter(Employee.trn != None).all()
@@ -457,7 +457,7 @@ def assign_employee(id):
             employee = employee[0:9]
             date_assigned = request.form['date_assigned']
             start_date = request.form['start_date']
-            assign = Assigned(fk_job=id, fk_employee=employee,
+            assign = Assigned(fk_job=trn, fk_employee=employee,
                               date_assigned=date_assigned, start_date=start_date)
             db.session.add(assign)
             db.session.commit()
@@ -476,12 +476,12 @@ def manage_complaints():
     else:
         return redirect(url_for('home_blueprint.employee_index'))
 
-@blueprint.route('/view-complaints/<string:id>/<string:resident>/<string:date>')
+@blueprint.route('/view-complaints/<string:trn>/<string:resident>/<string:date>')
 @login_required
-def view_complaints(id,resident,date):
+def view_complaints(trn,resident,date):
     user = Users.query.filter_by(TRN=current_user.TRN).first()
     if user.manager == True:
-        complaints = Complaint.query.filter_by(fk_job=id, fk_resident=resident,date=date).first()
+        complaints = Complaint.query.filter_by(fk_job=trn, fk_resident=resident,date=date).first()
         job = complaints.fk_job
         date = complaints.date
         resident = complaints.fk_resident

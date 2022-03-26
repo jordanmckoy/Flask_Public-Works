@@ -10,6 +10,11 @@ from app.auth import blueprint
 from app.auth.forms import LoginForm, CreateAccountForm
 from app.models import Users,Employee
 from app.auth.util import verify_pass
+import sys
+
+@blueprint.route('/login')
+def route_default():
+    return redirect(url_for('auth_blueprint.login'))
 
 # Login & Registration
 
@@ -23,13 +28,14 @@ def login():
         password = request.form['password']
 
         # Locate user
-        user = Users.query.filter_by(id=form_id).first()
+        user = Users.query.filter_by(trn=form_id).first()
 
         # Check the password
         if user and verify_pass(password, user.password):
 
             login_user(user)
-            return redirect(url_for('home_blueprint.employee_index'))
+            print("Logged In" , file=sys.stderr)
+            return redirect(url_for('authentication_blueprint.route_default'))
 
         # Something (user or pass) is not ok
         return render_template('auth/login.html',
@@ -39,19 +45,20 @@ def login():
     if not current_user.is_authenticated:
         return render_template('auth/login.html',
                                form=login_form)
-    return redirect(url_for('home_blueprint.employee_index'))
 
+    return redirect(url_for('employee_blueprint.employee_index'))
 
 @blueprint.route('/auth/register', methods=['GET', 'POST'])
 def register():
     create_account_form = CreateAccountForm(request.form)
-    if "POST" in request.method:
+    if 'register' in request.form:
 
         form_user = request.form['trn']
         form_email = request.form['email']
+        form_password = request.form['password']
 
         # Check usename exists
-        user = Users.query.filter_by(id=form_user).first()
+        user = Users.query.filter_by(trn=form_user).first()
         employee = Employee.query.filter_by(trn=form_user).first()
         if user:
             return render_template('auth/register.html',
@@ -73,7 +80,7 @@ def register():
                                    form=create_account_form)
 
         # else we can create the user
-        user = Users(**request.form)
+        user = Users(trn=form_user,email=form_email,password=form_password)
         db.session.add(user)
         db.session.commit()
 
