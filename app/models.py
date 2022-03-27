@@ -5,12 +5,11 @@ from app import db, login_manager
 
 from app.auth.util import hash_pass
 
-
 class Users(db.Model, UserMixin):
 
     __tablename__ = 'Users'
 
-    trn = db.Column(db.String(length=9), db.ForeignKey(
+    id = db.Column(db.String(length=9), db.ForeignKey(
         'employee.trn', ondelete='CASCADE'), primary_key=True)
     email = db.Column(db.String(64), unique=True)
     password = db.Column(db.LargeBinary)
@@ -30,7 +29,7 @@ class Users(db.Model, UserMixin):
             setattr(self, property, value)
 
     def __repr__(self):
-        return str(self.trn)
+        return str(self.id)
 
 
 class Employee(db.Model):
@@ -68,7 +67,7 @@ class Phone(db.Model):
 class TempEmployee(db.Model):
     fk_trn = db.Column(db.String(length=9), db.ForeignKey(
         'employee.trn', ondelete='CASCADE'), primary_key=True)
-    hr_wage = db.Column(db.DECIMAL(), nullable=False)
+    hr_wage = db.Column(db.NUMERIC(), nullable=False)
     contract_description = db.Column(db.Text(), nullable=False)
 
 
@@ -76,7 +75,7 @@ class RegEmployee(db.Model):
     fk_trn = db.Column(db.String(length=9), db.ForeignKey(
         'employee.trn', ondelete='CASCADE'), primary_key=True)
     hiring_date = db.Column(db.Date(), nullable=False)
-    yearly_salary = db.Column(db.DECIMAL(), nullable=False)
+    yearly_salary = db.Column(db.NUMERIC(), nullable=False)
     jobs = db.relationship('Job', backref='job_supervisor',
                            cascade="all, delete", lazy=True)
 
@@ -129,14 +128,15 @@ class Complaint(db.Model):
         'job.ref_number'), nullable=True,primary_key=True)
     date = db.Column(db.Date(), nullable=False,primary_key=True)
     content = db.Column(db.Text(), nullable=False)
+    resolved = db.Column(db.Boolean, default=False, nullable=False)
 
 @login_manager.user_loader
-def user_loader(trn):
-    return Users.query.filter_by(trn=trn).first()
+def user_loader(id):
+    return Users.query.filter_by(id=id).first()
 
 
 @login_manager.request_loader
 def request_loader(request):
     trn = request.form.get('trn')
-    user = Users.query.filter_by(trn=trn).first()
+    user = Users.query.filter_by(id=trn).first()
     return user if user else None

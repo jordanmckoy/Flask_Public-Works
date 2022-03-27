@@ -27,6 +27,7 @@ d.addEventListener("DOMContentLoaded", function(event) {
         buttonsStyling: false
     });
 
+
     var themeSettingsEl = document.getElementById('theme-settings');
     var themeSettingsExpandEl = document.getElementById('theme-settings-expand');
 

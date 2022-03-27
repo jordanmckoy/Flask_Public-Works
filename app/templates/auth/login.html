@@ -1,4 +1,4 @@
-{% extends "layouts/base-fullscreen.html" %} {% block title %} Sign IN {%
+{% extends "layouts/auth/base-fullscreen.html" %} {% block title %} Sign In {%
 endblock %}
 
 <!-- Specific Page CSS goes HERE  -->
@@ -30,7 +30,7 @@ endblock %}
 
               <!-- Form -->
               <div class="form-group mb-4">
-                <label for="email">TRN</label>
+                <label for="trn">TRN</label>
                 <div class="input-group">
                   <span class="input-group-text" id="basic-addon1">
                     <span class="fas fa-user-circle"></span>
@@ -76,7 +76,7 @@ endblock %}
                 </div>
               </div>
               <div class="d-grid">
-                <button type="submit" name="register" class="btn btn-secondary">Sign In</button>
+                <button type="submit" name="login" class="btn btn-secondary">Sign In</button>
               </div>
             </form>
             <br />

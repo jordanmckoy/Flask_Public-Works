@@ -1,0 +1,115 @@
+{% extends "layouts/employee/base.html" %} {% block title %} Settings {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %} {% block content %}
+
+<div
+  class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4"
+>
+</div>
+<div class="row">
+  <div class="col-12 col-xl-8">
+    <div class="card card-body border-0 shadow mb-4">
+      <h2 class="h5 mb-4">General information</h2>
+      <form>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <div>
+              <label for="job">Job ID</label>
+              <input type="text" id="input-first-name" class="form-control"value = "{{ job.ref_number }}" readonly>
+            </div>
+          </div>
+          <div class="col-md-6 mb-3">
+            <div>
+              <label for="start_date">Start Date</label>
+              <input type="text" id="input-last-name" class="form-control"value = "{{ job.job_start_date }}" readonly>
+            </div>
+          </div>
+          <div class="col-md-6 mb-3">
+            <div>
+              <label for="start_date">End Date</label>
+              <input type="text" id="input-last-name" class="form-control"value = "{{ job.job_end_date }}" readonly>
+            </div>
+          </div>
+        </div>
+        <h2 class="h5 my-4">Location</h2>
+        <div class="row">
+          <div class="col-sm-3 mb-3">
+            <div class="form-group">
+              <label for="number">Street Number</label>
+              <input
+                class="form-control"
+                id="number"
+                type="number"
+                value="{{job.street_num}}"
+                readonly
+              />
+            </div>
+          </div>
+          <div class="col-sm-9 mb-3">
+            <div class="form-group">
+              <label for="address">Address</label>
+              <input
+                class="form-control"
+                id="address"
+                type="text"
+                value=" {{job.street_name}}"
+                readonly
+              />
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-4 mb-3">
+            <div class="form-group">
+              <label for="city">City</label>
+              <input
+                class="form-control"
+                id="city"
+                type="text"
+                value=" {{job.city}}"
+                readonly
+              />
+            </div>
+          </div>
+          <div class="col-sm-4 mb-3">
+            <label for="parish">Parish</label>
+            <input
+                class="form-control"
+                id="parish"
+                type="text"
+                value="{{job.parish}}"
+                readonly
+              />
+          </div>
+          <div class="col-sm-4 mb-3">
+            <label for="supervisor">Supervisor</label>
+            <input
+                class="form-control"
+                id="parish"
+                type="number"
+                value="{{job.fk_supervisor}}"
+                readonly
+              />
+          </div>
+          <div class="col-sm-4 mb-3">
+            <label for="description">Description</label>
+            <input
+                class="form-control"
+                id="parish"
+                type="text" 
+                rows="4" 
+                value="{{job.description}}"
+                readonly
+              />
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}{% endblock javascripts %}
