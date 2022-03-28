@@ -1,0 +1,43 @@
+{% extends 'layouts/manager/base.html' %} {% block title %} Profile {% endblock
+    title %} {% block content %}
+    <!-- Page content -->
+    <br>
+    <div class="container-fluid mt--6">
+      <div class="row">
+        <div class="col-xl-8 order-xl-1">
+          <div class="card">
+            <div class="card-header">
+              <div class="row align-items-center">
+                <div class="col-8">
+                  <h3 class="mb-0">Promote Regular Employee</h3>
+                </div>
+              </div>
+            </div>
+            <div class="card-body">
+              <form role="form" method="post" action="">
+                {{ form.csrf_token }}
+    
+                <div class="col-md-4 position-relative">
+                  <label for="validationTooltip02" class="form-label"
+                    >Salary</label
+                  >
+                  {{ form.yearly_salary(type="number", class="form-control") }}
+                </div>
+                <br />
+                <div class="col-12">
+                  <button class="btn btn-primary" name="add" type="submit">
+                    Submit form
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    {% endblock content %}
+    
+    <!-- Specific JS goes HERE -->
+    {% block javascripts %}{% endblock javascripts %}
+    

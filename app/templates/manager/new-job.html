@@ -1,0 +1,77 @@
+{% extends 'layouts/manager/base.html' %} {% block title %} Profile {% endblock title %}
+{% block content %}
+<!-- Page content -->
+<br>
+<div class="container-fluid mt--6">
+  <div class="row">
+    <div class="col-xl-8 order-xl-1">
+      <div class="card">
+        <div class="card-header">
+          <div class="row align-items-center">
+            <div class="col-8">
+              <h3 class="mb-0">Create Job</h3>
+              <span class="text-center">
+                Please Create a Job
+            </span>  
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <form role="form" method="post" action="" >
+            
+            {{ form.csrf_token }}
+
+            <div class="col-md-4 position-relative">
+              <label for="validationTooltipUsername" class="form-label">Start Date</label>
+                {{ form.job_start(type="Date", class="form-control" ) }}
+            </div>
+            <br>
+            <div class="col-md-4 position-relative">
+              <label for="validationTooltip02" class="form-label">Street Number</label>
+              {{ form.street_number(type="text", class="form-control",placeholder="Street Number" ) }}
+            </div>
+            <br>
+            <div class="col-md-4 position-relative">
+              <label for="validationTooltip02" class="form-label">Street Name</label>
+              {{ form.street_name(type="text", class="form-control",placeholder="Street Name" ) }}
+            </div>
+            <br>
+            <div class="col-md-3 position-relative">
+              <label for="validationTooltip03" class="form-label">City</label>
+              {{ form.city(type="text", class="form-control",placeholder="City" ) }}
+            </div>
+            <br>
+            <div class="col-md-6 position-relative">
+              <label for="validationTooltip05" class="form-label">Parish</label>
+              {{ form.parish(type="text", class="form-control",placeholder="Parish" ) }}
+            </div>
+            <br>
+            <div class="col-md-3 position-relative">
+              <label for="validationTooltip05" class="form-label">Job Description</label>
+              {{ form.description(type="text", class="form-control",placeholder="Job Description" ) }}
+            </div>
+            <br>
+            <div class="col-md-3 position-relative">
+              <label for="validationTooltip03" class="form-label">Supervisor</label>
+              {{ form.supervisor(type="text", class="form-control",placeholder="Supervisor TRN" ) }}
+            </div>
+            <br>
+            <div class="col-md-3 position-relative">
+              <label for="validationTooltip03" class="form-label">Original Job</label>
+              {{ form.original_job(type="number", class="form-control",placeholder="Original Job Reference Number" ) }}
+            </div>
+            <br>
+            <div class="col-12">
+              <button class="btn btn-primary" name="add" type="submit">Submit form</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}
+
+<!-- Specific JS goes HERE -->
+{% block javascripts %}{% endblock javascripts %}

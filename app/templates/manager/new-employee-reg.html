@@ -1,0 +1,94 @@
+{% extends 'layouts/manager/base.html' %} {% block title %} Profile {% endblock title %}
+{% block content %}
+<!-- Page content -->
+<br>
+<div class="container-fluid mt--6">
+  <div class="row">
+    <div class="col-xl-4 order-xl-2">
+      <div class="card card-profile">
+        <div class="row justify-content-center"></div>
+      </div>
+    </div>
+    <div class="col-xl-8 order-xl-1">
+      <div class="card">
+        <div class="card-header">
+          <div class="row align-items-center">
+            <div class="col-8">
+              <h3 class="mb-0">Create Employee</h3>
+              <span class="text-center">
+                {% if msg %}
+                    {{ msg | safe }}
+                {% else %}
+                    Add your credentials
+                {% endif %} 
+            </span>  
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <form role="form" method="POST" action="">
+            
+            {{ form.csrf_token }}
+
+            <div class="col-md-4 position-relative">
+              <label for="validationTooltipUsername" class="form-label">TRN</label>
+              <div class="input-group has-validation">
+                <span class="input-group-text" id="validationTooltipUsernamePrepend">TRN:</span>
+                {{ form.trn(type="number", class="form-control",placeholder="TRN" ) }}
+              </div>
+            </div>
+            <div class="col-md-4 position-relative">
+              <label for="validationTooltip02" class="form-label">First name</label>
+              {{ form.first_name(type="text", class="form-control",placeholder="First Name" ) }}
+            </div>
+            <div class="col-md-4 position-relative">
+              <label for="validationTooltip02" class="form-label">Last name</label>
+              {{ form.last_name(type="text", class="form-control",placeholder="Last Name" ) }}
+            </div>
+            <div class="col-md-3 position-relative">
+              <label for="validationTooltip03" class="form-label">Street Number</label>
+              {{ form.street_number(type="number", class="form-control",placeholder="Street Number", default="Null" ) }}
+            </div>
+            <div class="col-md-6 position-relative">
+              <label for="validationTooltip05" class="form-label">Street Name</label>
+              {{ form.street_name(type="text", class="form-control",placeholder="Street Name" ) }}
+            </div>
+            <div class="col-md-3 position-relative">
+              <label for="validationTooltip05" class="form-label">City</label>
+              {{ form.city(type="text", class="form-control",placeholder="City" ) }}
+            </div>
+            <div class="col-md-3 position-relative">
+              <label for="validationTooltip03" class="form-label">Parish</label>
+              {{ form.parish(type="text", class="form-control",placeholder="Parish" ) }}
+            </div>
+            <div class="col-md-3 position-relative">
+              <label for="validationTooltip03" class="form-label">Auditor</label>
+              {{ form.auditor(type="number", class="form-control",placeholder="Auditor TRN" ) }}
+            </div>
+            <div class="col-md-3 position-relative">
+              <label for="validationTooltip05" class="form-label">Phone Number</label>
+              {{ form.phone(type="number", class="form-control",placeholder="Phone Number" ) }}
+            </div>
+            <div class="col-md-4 position-relative">
+              <label for="validationTooltip02" class="form-label">Hiring Date</label>
+              {{ form.hiring_date(type="Date", class="form-control" ) }}
+            </div>
+            <div class="col-md-4 position-relative">
+              <label for="validationTooltip02" class="form-label">Yearly Salary</label>
+              {{ form.yearly_salary(type="Decimal", class="form-control",placeholder="Salary" ) }}
+            </div>
+            <br>
+            <div class="col-12">
+              <button class="btn btn-primary" name="add" type="submit">Submit form</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}
+
+<!-- Specific JS goes HERE -->
+{% block javascripts %}{% endblock javascripts %}

@@ -1,0 +1,48 @@
+{% extends 'layouts/manager/base.html' %} {% block title %} Profile {% endblock
+title %} {% block content %}
+<!-- Page content -->
+<div class="container-fluid mt--6">
+  <div class="row">
+    <div class="col-xl-4 order-xl-2">
+      <div class="card card-profile">
+        <div class="row justify-content-center"></div>
+      </div>
+    </div>
+    <div class="col-xl-8 order-xl-1">
+      <div class="card">
+        <div class="card-header">
+          <div class="row align-items-center">
+            <div class="col-8">
+              <h3 class="mb-0">End Job</h3>
+              <span class="text-center">
+                Please Enter Job End Date
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <form role="form" method="post" action="">
+            {{ form.csrf_token }}
+            <div class="col-md-4 position-relative">
+              <label for="validationTooltipUsername" class="form-label"
+                >End Date</label
+              >
+              {{ form.end_date(type="Date", class="form-control" ) }}
+            </div>
+            <br />
+            <div class="col-12">
+              <button class="btn btn-primary" name="add" type="submit">
+                Submit form
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}
+
+<!-- Specific JS goes HERE -->
+{% block javascripts %}{% endblock javascripts %}

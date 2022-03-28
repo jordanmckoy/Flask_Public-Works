@@ -1,0 +1,121 @@
+
+{% extends "layouts/manager/base.html" %}
+
+{% block title %} Tables {% endblock %} 
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+  <div class="py-4">
+      <nav aria-label="breadcrumb" class="d-none d-md-inline-block">
+          <ol class="breadcrumb breadcrumb-dark breadcrumb-transparent">
+              <li class="breadcrumb-item">
+                  <a href="#">
+                      <svg class="icon icon-xxs" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                  </a>
+              </li>
+              <li class="breadcrumb-item active" aria-current="page">Jobs</li>
+          </ol>
+      </nav>
+      <div class="d-flex justify-content-between w-100 flex-wrap">
+          <div class="mb-3 mb-lg-0">
+              <h1 class="h4">Job Assigned Table</h1>
+              <p class="mb-0">Below are a list of all the jobs you have been assigned to.</p>
+          </div>
+      </div>
+  </div>
+
+  <div class="card border-0 shadow">
+      <div class="card-body">
+          <div class="table-responsive">
+              <table id="datatablesSimple" class="table table-centered table-nowrap mb-0 rounded">
+                  <thead class="thead-light">
+                      <tr>
+                          <th class="border-0 rounded-start">TRN</th>
+                          <th class="border-0">First Name</th>
+                          <th class="border-0">Last Name</th>
+                          <th class="border-0">Street Num</th>
+                          <th class="border-0">Street Name</th>
+                          <th class="border-0">City</th>
+                          <th class="border-0">Parish</th>
+                          <th class="border-0">Auditor</th>
+                          <th class="border-0 rounded-end">Options</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      <!-- Item -->
+                      {% for employee in all_employees %}
+                      <tr>
+                        <td class="border-0">                                             
+                            <a href="#" class="d-flex align-items-center">
+                                
+                                <div><span class="h6">{{ employee.trn }}</span></div>
+                            </a>
+                        </td>
+                          <td class="border-0">                                             
+                              <a href="#" class="d-flex align-items-center">
+                                  <div><span class="h6">{{ employee.first_name }}</span></div>
+                              </a>
+                          </td>
+                          <td class="border-0">                                             
+                            <a href="#" class="d-flex align-items-center">
+                                
+                                <div><span class="h6">{{ employee.last_name }}</span></div>
+                            </a>
+                        </td>
+                        <td class="border-0">                                             
+                            <a href="#" class="d-flex align-items-center">
+                                
+                                <div><span class="h6">{{ employee.street_num}}</span></div>
+                            </a>
+                        </td>
+                        
+                        <td class="border-0">                                             
+                            <a href="#" class="d-flex align-items-center">
+                                
+                                <div><span class="h6">{{ employee.street_name}}</span></div>
+                            </a>
+                        </td>
+                        <td class="border-0">                                             
+                            <a href="#" class="d-flex align-items-center">
+                                
+                                <div><span class="h6">{{ employee.city}}</span></div>
+                            </a>
+                        </td>
+                        <td class="border-0">                                             
+                            <a href="#" class="d-flex align-items-center">
+                                
+                                <div><span class="h6">{{ employee.parish}}</span></div>
+                            </a>
+                        </td>
+                        <td class="border-0">                                             
+                            <a href="#" class="d-flex align-items-center">
+                                
+                                <div><span class="h6">{{ employee.auditor}}</span></div>
+                            </a>
+                        </td>
+                        <td>
+                            <a class="btn btn-primary" href="{{url_for('manager_blueprint.view_employee', trn=employee.trn)}}" role="button">View</a>  
+                            <a class="btn btn-primary" href="{{url_for('manager_blueprint.promote_employee', trn=employee.trn)}}" role="button">Promote Employee</a>
+                            <a class="btn btn-primary" href="{{url_for('manager_blueprint.delete_employee', trn=employee.trn)}}" role="button">Remove</a>   
+                          </td>
+                      </tr>
+                      <!-- End of Item -->
+                      {% endfor %}
+                  </tbody>
+              </table>
+          </div>
+      </div>
+  </div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+<script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" crossorigin="anonymous"></script>
+<script src="/static/assets/js/datatables-simple-demo.js"></script>
+
+{% endblock javascripts %}
