@@ -5,6 +5,7 @@ from app import db, login_manager
 
 from app.auth.util import hash_pass
 
+
 class Users(db.Model, UserMixin):
 
     __tablename__ = 'Users'
@@ -14,6 +15,7 @@ class Users(db.Model, UserMixin):
     email = db.Column(db.String(64), unique=True)
     password = db.Column(db.LargeBinary)
     manager = db.Column(db.Boolean, default=False, nullable=False)
+
     def __init__(self, **kwargs):
         for property, value in kwargs.items():
             # depending on whether value is an iterable or not, we must
@@ -125,10 +127,11 @@ class Complaint(db.Model):
     fk_resident = db.Column(db.String(), db.ForeignKey(
         'resident.email'), primary_key=True)
     fk_job = db.Column(db.Integer(), db.ForeignKey(
-        'job.ref_number'), nullable=True,primary_key=True)
-    date = db.Column(db.Date(), nullable=False,primary_key=True)
+        'job.ref_number'), nullable=True, primary_key=True)
+    date = db.Column(db.Date(), nullable=False, primary_key=True)
     content = db.Column(db.Text(), nullable=False)
     resolved = db.Column(db.Boolean, default=False, nullable=False)
+
 
 @login_manager.user_loader
 def user_loader(id):

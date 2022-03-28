@@ -33,6 +33,7 @@ def configure_database(app):
 
 mail = Mail()
 
+
 def create_app(config):
     app = Flask(__name__)
     app.config['MAIL_SERVER'] = 'smtp.gmail.com'

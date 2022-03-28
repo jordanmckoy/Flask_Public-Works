@@ -4,8 +4,6 @@ from flask import render_template
 from flask_login import login_required
 from app.models import Employee, Assigned, Job, Phone, TempEmployee, RegEmployee, Users
 from flask_login import current_user
-import sys
-import inspect
 # Employee Dashboard Routes
 
 
@@ -15,7 +13,7 @@ def employee_index():
     users = Users.query.filter_by(id=current_user.id).first()
     if users.manager == True:
         manager_button = True
-    else: 
+    else:
         manager_button = False
     user = current_user.id
     jobs_assigned = Assigned.query.filter(
@@ -34,15 +32,15 @@ def employee_index():
         user_auditor = Employee.query.filter_by(trn=auditor).first()
         if auditor != None:
             auditor_name = f'{user_auditor.first_name} {user_auditor.last_name}'
-            return render_template('employee/dashboard.html', segment='Dashboard', 
-            paytype='Salary', jobs_assigned=jobs_assigned, pay=pay, 
-            current_job=current_job, auditor_id=auditor_id, auditor_name=auditor_name, 
-            manager_button=manager_button,count=count)
+            return render_template('employee/dashboard.html', segment='Dashboard',
+                                   paytype='Salary', jobs_assigned=jobs_assigned, pay=pay,
+                                   current_job=current_job, auditor_id=auditor_id, auditor_name=auditor_name,
+                                   manager_button=manager_button, count=count)
         else:
             auditor_id = 'No Auditor Is Assigned'
-            return render_template('employee/dashboard.html', segment='Dashboard', paytype='Salary', 
-            jobs_assigned=jobs_assigned, pay=pay, current_job=current_job, 
-            auditor_id=auditor_id, manager_button=manager_button,count=count)
+            return render_template('employee/dashboard.html', segment='Dashboard', paytype='Salary',
+                                   jobs_assigned=jobs_assigned, pay=pay, current_job=current_job,
+                                   auditor_id=auditor_id, manager_button=manager_button, count=count)
 
     elif temp_employee:
         tempemployee = TempEmployee.query.filter_by(fk_trn=user).first()
@@ -53,16 +51,18 @@ def employee_index():
         user_auditor = Employee.query.filter_by(trn=auditor).first()
         if auditor != None:
             auditor_name = f'{user_auditor.first_name} {auditor.last_name}'
-            return render_template('employee/dashboard.html', segment='Dashboard', paytype='Hourly Wage', 
-            jobs_assigned=jobs_assigned, pay=pay, current_job=current_job, 
-            auditor_id=auditor_id, auditor_name=auditor_name,count=count)
+            return render_template('employee/dashboard.html', segment='Dashboard', paytype='Hourly Wage',
+                                   jobs_assigned=jobs_assigned, pay=pay, current_job=current_job,
+                                   auditor_id=auditor_id, auditor_name=auditor_name, count=count)
         else:
             auditor_id = 'No Auditor Is Assigned'
-            return render_template('employee/dashboard.html', segment='Dashboard', paytype='Hourly Wage', 
-            jobs_assigned=jobs_assigned, pay=pay, current_job=current_job, 
-            auditor_id=auditor_id,count=count)
+            return render_template('employee/dashboard.html', segment='Dashboard', paytype='Hourly Wage',
+                                   jobs_assigned=jobs_assigned, pay=pay, current_job=current_job,
+                                   auditor_id=auditor_id, count=count)
 
 # Employee's Jobs
+
+
 @blueprint.route('/employee/jobs')
 @login_required
 def jobs():
@@ -71,6 +71,8 @@ def jobs():
     return render_template('employee/job.html', segment='index', jobs_assigned=jobs_assigned)
 
 # Employee Profile
+
+
 @blueprint.route('/employee/profile')
 @login_required
 def profile():
@@ -86,6 +88,8 @@ def profile():
     return render_template('employee/profile.html', segment='index', phone=phone, user=user, employee=employee, first_name=first_name, last_name=last_name, parish=parish, city=city)
 
 # Emplyoee View Job Function
+
+
 @blueprint.route('/employee/view-job/<string:id>')
 @login_required
 def view_job(id):
@@ -93,14 +97,16 @@ def view_job(id):
     return render_template('employee/view-job.html', job=job, segment='View Job')
 
 # Employee Supervisor Portal
+
+
 @blueprint.route('/employee/supervisor-portal')
 @login_required
 def supervisor_portal():
-    job = Job.query.filter_by(fk_supervisor= current_user.id).first()
+    job = Job.query.filter_by(fk_supervisor=current_user.id).first()
     if job:
-        return render_template('employee/supervisor.html',msg='Below are a list of jobs you are supervising', job=job, segment='Supervisor Portal')
+        return render_template('employee/supervisor.html', msg='Below are a list of jobs you are supervising', job=job, segment='Supervisor Portal')
     else:
-        return render_template('employee/supervisor.html', msg='You are not currently a supervisor',job=job, segment='Supervisor Portal')
+        return render_template('employee/supervisor.html', msg='You are not currently a supervisor', job=job, segment='Supervisor Portal')
 
 
 @blueprint.errorhandler(403)

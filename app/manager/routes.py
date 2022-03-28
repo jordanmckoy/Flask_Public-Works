@@ -4,7 +4,7 @@ from sqlalchemy import false
 from app.manager import blueprint
 from flask import redirect, render_template, request, url_for
 from flask_login import login_required
-from app.models import Complaint, Employee, Assigned,TempEmployee, RegEmployee, Phone, Job, Users
+from app.models import Complaint, Employee, Assigned, TempEmployee, RegEmployee, Phone, Job, Users
 from flask_login import current_user
 from app import db
 from wtforms import DateField, RadioField
@@ -22,10 +22,11 @@ def manager():
         employee_count = Employee.query.count()
         job_count = Job.query.filter_by(job_end_date=None).count()
         complaint_count = Complaint.query.filter_by(resolved=0).count()
-        job = Job.query.filter(Job.job_end_date==None).all()
-        return render_template('manager/dashboard.html', segment='dashboard',limit=limit,job=job,employee_count=employee_count, job_count=job_count,complaint_count=complaint_count, employee=employee )
+        job = Job.query.filter(Job.job_end_date == None).all()
+        return render_template('manager/dashboard.html', segment='dashboard', limit=limit, job=job, employee_count=employee_count, job_count=job_count, complaint_count=complaint_count, employee=employee)
     else:
         return redirect(url_for('employee_blueprint.employee_index'))
+
 
 @blueprint.route('/manager/jobs')
 @login_required
@@ -37,15 +38,17 @@ def manage_jobs():
     else:
         return redirect(url_for('employee_blueprint.employee_index'))
 
+
 @blueprint.route('/manager/supervisors')
 @login_required
 def supervisors():
     user = Users.query.filter_by(id=current_user.id).first()
     if user.manager == True:
         jobs = Job.query.filter(Job.ref_number != None)
-        return render_template('manager/supervisor.html',segment='supervisor', jobs=jobs)
+        return render_template('manager/supervisor.html', segment='supervisor', jobs=jobs)
     else:
-        return redirect(url_for('employee_blueprint.employee_index'))   
+        return redirect(url_for('employee_blueprint.employee_index'))
+
 
 @blueprint.route('/manager/assigned')
 @login_required
@@ -55,7 +58,8 @@ def assigned():
         jobs_assigned = Assigned.query.filter(Assigned.fk_employee != None)
         return render_template('manager/assigned.html', segment='index', jobs_assigned=jobs_assigned)
     else:
-        return redirect(url_for('employee_blueprint.employee_index')) 
+        return redirect(url_for('employee_blueprint.employee_index'))
+
 
 @blueprint.route('/manager/employees')
 @login_required
@@ -66,6 +70,7 @@ def manage_employees():
         return render_template('manager/manage-employees.html', segment='employees', all_employees=all_employees)
     else:
         return redirect(url_for('employee_blueprint.employee_index'))
+
 
 @blueprint.route('/manager/promote-employee/<string:trn>')
 @login_required
@@ -133,6 +138,7 @@ def view_employee(trn):
             return redirect(url_for('manager_blueprint.view_temporary_employee', trn=trn))
     else:
         return redirect(url_for('employee_blueprint.employee_index'))
+
 
 @blueprint.route('/manager/view-job/<string:id>')
 @login_required
@@ -353,7 +359,7 @@ def regemployees():
         else:
             return render_template('manager/new-employee-reg.html', form=employeeform, segment='employee')
     else:
-        return redirect(url_for('emploayee_blueprint.employee_index'))
+        return redirect(url_for('employee_blueprint.employee_index'))
 
 
 @blueprint.route('/manager/add-jobs', methods=['GET', 'POST'])
@@ -428,7 +434,7 @@ def end_job(id):
                 dict(job_end_date=end_date))
             db.session.commit()
             return redirect(url_for('manager_blueprint.manage_jobs'))
-        return render_template('manager/end-job.html', success=false, form=form)
+        return render_template('manager/end-job.html', success=false, form=form, segment='job')
     else:
         return redirect(url_for('employee_blueprint.employee_index'))
 
@@ -458,33 +464,38 @@ def assign_employee(id):
             db.session.add(assign)
             db.session.commit()
             return redirect(url_for('manager_blueprint.manage_jobs'))
-        return render_template('manager/assign-job.html', success=false, form=form, employees=employee_list)
+        return render_template('manager/assign-job.html', success=false, form=form, employees=employee_list, segment='employee')
     else:
         return redirect(url_for('employee_blueprint.employee_index'))
 
-# @blueprint.route('/manager/manage-complaints')
-# @login_required
-# def manage_complaints():
-#     user = Users.query.filter_by(id=current_user.id).first()
-#     if user.manager == True:
-#         complaints = Complaint.query.filter(Complaint.fk_resident != None).all()
-#         return render_template('manager/complaints.html',jobs_complaints=complaints)        
-#     else:
-#         return redirect(url_for('employee_blueprint.employee_index'))
 
-# @blueprint.route('/manager/view-complaints/<string:trn>/<string:resident>/<string:date>')
-# @login_required
-# def view_complaints(trn,resident,date):
-#     user = Users.query.filter_by(TRN=current_user.TRN).first()
-#     if user.manager == True:
-#         complaints = Complaint.query.filter_by(fk_job=trn, fk_resident=resident,date=date).first()
-#         job = complaints.fk_job
-#         date = complaints.date
-#         resident = complaints.fk_resident
-#         complaint = complaints.content
-#         return render_template('manager/view-complaints.html', job=job,date=date,resident=resident,complaint=complaint)
-#     else:
-#         return redirect(url_for('employee_blueprint.employee_index'))
+@blueprint.route('/manager/manage-complaints')
+@login_required
+def manage_complaints():
+    user = Users.query.filter_by(id=current_user.id).first()
+    if user.manager == True:
+        complaints = Complaint.query.filter(
+            Complaint.fk_resident != None).all()
+        return render_template('manager/complaints.html', jobs_complaints=complaints, segment='complaints')
+    else:
+        return redirect(url_for('employee_blueprint.employee_index'))
+
+
+@blueprint.route('/manager/view-complaints/<string:id>/<string:resident>/<string:date>')
+@login_required
+def view_complaints(id, resident, date):
+    user = Users.query.filter_by(id=current_user.id).first()
+    if user.manager == True:
+        complaints = Complaint.query.filter_by(
+            fk_job=id, fk_resident=resident, date=date).first()
+        job = complaints.fk_job
+        date = complaints.date
+        resident = complaints.fk_resident
+        complaint = complaints.content
+        return render_template('manager/view-complaints.html', job=job, date=date, resident=resident, complaint=complaint, segment='complaints')
+    else:
+        return redirect(url_for('employee_blueprint.employee_index'))
+
 
 @blueprint.errorhandler(403)
 def access_forbidden(error):

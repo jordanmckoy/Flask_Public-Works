@@ -5,8 +5,8 @@ from wtforms.validators import DataRequired, Email
 
 class ComplaintForm(FlaskForm):
     email_address = StringField('Email',
-                      id='email_create',
-                      validators=[DataRequired(), Email()])
+                                id='email_create',
+                                validators=[DataRequired(), Email()])
 
     first_name = StringField(
         'first name', id='first_name_create', validators=[DataRequired()])
@@ -33,11 +33,11 @@ class ComplaintForm(FlaskForm):
     date = DateField('date', validators=[DataRequired()])
 
     complaint = TextAreaField(label='Complaint Content',
-                            validators=[DataRequired()])
+                              validators=[DataRequired()])
 
 # Kingston
 # Saint Andrew
-# Portland 
+# Portland
 # Saint Thomas
 # Saint Catherine
 # SaintMary

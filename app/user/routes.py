@@ -46,4 +46,4 @@ def complaint_page():
             db.session.commit()
             return redirect(url_for('home_blueprint.index'))
     else:
-        return render_template('user/complaints.html', segment='Complaints',form=form)
+        return render_template('user/complaints.html', segment='Complaints', form=form)
