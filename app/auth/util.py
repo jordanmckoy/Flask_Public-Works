@@ -2,6 +2,7 @@ import os
 import hashlib
 import binascii
 
+
 #Used from Flask SB Admin
 
 def hash_pass(password):

@@ -67,8 +67,8 @@
                                 <div><span class="h6">{{ job.start_date }}</span></div>
                             </a>
                         </td>
-                        <td><a class="btn btn-primary" href="" role="button">View Employee</a>
-                            <a class="btn btn-primary" href="" role="button">View Job</a>
+                        <td><a class="btn btn-primary" href="{{url_for('manager_blueprint.view_employee', trn=job.fk_employee)}}" role="button">View Employee</a>
+                            <a class="btn btn-primary" href="{{url_for('manager_blueprint.view_jobs', id=job.fk_job)}}" role="button">View Job</a>
                         </td>
                       </tr>
                       <!-- End of Item -->

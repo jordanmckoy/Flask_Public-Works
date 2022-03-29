@@ -26,8 +26,23 @@ endblock %}
               href="{{ url_for('auth_blueprint.login') }}"
             >
               <i class="fas fa-chevron-left me-3 ps-2 animate-left-3"></i
-              >LOGIN</a
+              >Employee Login</a
             >
+            <a
+              class="btn btn-dark animate-hover"
+              href="{{ url_for('auth_blueprint.manager_login') }}"
+            >
+              <i class="fas fa-chevron-left me-3 ps-2 animate-left-3"></i
+              >Manager Login</a
+            >
+            <a
+              class="btn btn-dark animate-hover"
+              href="{{ url_for('user_blueprint.index') }}"
+            >
+              <i class="fas fa-chevron-left me-3 ps-2 animate-left-3"></i
+              >Home</a
+            >
+            
           </div>
         </div>
       </div>

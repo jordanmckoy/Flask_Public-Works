@@ -10,7 +10,15 @@ class Config(object):
     WTF_CSRF_SECRET_KEY = config('WTF_CSRF_SECRET_KEY')
     SECRET_KEY = config('SECRET_KEY')
 
+    MAIL_SERVER = config('MAIL_SERVER')
+    MAIL_PORT = config('MAIL_PORT')
+    MAIL_USERNAME = config('MAIL_USERNAME')
+    MAIL_PASSWORD = config('MAIL_PASSWORD')
+    MAIL_USE_TLS=config('MAIL_USE_TLS')
+    MAIL_USE_SSL=config('MAIL_USE_SSL')
+
     # This will create a file in <app> FOLDER
+    
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + \
         os.path.join(basedir, 'db.sqlite3')
     SQLALCHEMY_TRACK_MODIFICATIONS = False

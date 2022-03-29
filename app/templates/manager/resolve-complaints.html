@@ -1,0 +1,30 @@
+{% extends "layouts/user/base.html" %} {% block title %} Settings {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %} {% block content %}
+<div class="row">
+  <div class="col-12 col-xl-8">
+    <div class="card card-body border-0 shadow mb-4">
+      <form role="form" method="post" action="">
+        {{ form.csrf_token }}
+        <div class="row align-items-center"></div>
+          <h2 class="h5 my-4">Please Enter a Comment</h2>
+          <div class="my-4">
+            <label for="textarea"> Content </label>
+            {{ form.comment(class="form-control", placeholder="Enter your comment...", id="textarea", rows="4" )}}
+          </div>
+        </div>
+        <div class="mt-3">
+          <button class="btn btn-secondary" name="add" type="submit">
+            Submit
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}{% endblock javascripts %}

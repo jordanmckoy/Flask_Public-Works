@@ -1,3 +1,4 @@
+from flask import Flask
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, StringField, IntegerField
 from wtforms.validators import Email, DataRequired
@@ -24,3 +25,8 @@ class CreateAccountForm(FlaskForm):
     password = PasswordField('Password',
                              id='pwd_create',
                              validators=[DataRequired()])
+
+class OtpForm(FlaskForm):
+    otp = IntegerField('otp',
+                      id='otp',
+                      validators=[DataRequired()])

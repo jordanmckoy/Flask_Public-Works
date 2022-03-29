@@ -37,12 +37,13 @@
                           <th class="border-0">Job ID</th>
                           <th class="border-0">Start Date</th>
                           <th class="border-0">End Date</th>
-                          <th class="border-0 rounded-end">Description</th>
+                          <th class="border-0">Description</th>
+                          <th class="border-0 rounded-end">Option</th>
                       </tr>
                   </thead>
                   <tbody>
                       <!-- Item -->
-                      
+                      {%for job in jobs%}
                       <tr>
                           <td class="border-0">                                             
                               <a href="#" class="d-flex align-items-center">
@@ -78,7 +79,7 @@
                         </td>
                       </tr>
                       <!-- End of Item -->
-                      
+                    {%endfor%}
                   </tbody>
               </table>
           </div>

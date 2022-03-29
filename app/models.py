@@ -1,10 +1,11 @@
 # from email.policy import default
+from sys import audit
 from flask_login import UserMixin
-
+from sqlalchemy import event
 from app import db, login_manager
 
 from app.auth.util import hash_pass
-
+from sqlalchemy.schema import DDL
 
 class Users(db.Model, UserMixin):
 
@@ -92,7 +93,7 @@ class Job(db.Model):
     parish = db.Column(db.String(), nullable=False)
     description = db.Column(db.Text(), nullable=False)
     fk_supervisor = db.Column(db.String(length=9), db.ForeignKey(
-        'reg_employee.fk_trn'), nullable=False,)
+        'reg_employee.fk_trn', ondelete='CASCADE'), nullable=False,)
     fk_job = db.Column(db.Integer(), db.ForeignKey(
         'job.ref_number', ondelete='CASCADE'), nullable=True)
     assigned = db.relationship(
@@ -103,7 +104,7 @@ class Job(db.Model):
 
 class Assigned(db.Model):
     fk_employee = db.Column(db.String(length=9), db.ForeignKey(
-        'employee.trn'), primary_key=True)
+        'employee.trn', ondelete='CASCADE'), primary_key=True)
     fk_job = db.Column(db.Integer(), db.ForeignKey(
         'job.ref_number', ondelete='CASCADE'), primary_key=True)
     date_assigned = db.Column(db.Date(), nullable=True)
@@ -125,13 +126,195 @@ class Resident(db.Model):
 
 class Complaint(db.Model):
     fk_resident = db.Column(db.String(), db.ForeignKey(
-        'resident.email'), primary_key=True)
+        'resident.email', ondelete='CASCADE'), primary_key=True)
     fk_job = db.Column(db.Integer(), db.ForeignKey(
-        'job.ref_number'), nullable=True, primary_key=True)
+        'job.ref_number', ondelete='CASCADE'), nullable=True, primary_key=True)
     date = db.Column(db.Date(), nullable=False, primary_key=True)
     content = db.Column(db.Text(), nullable=False)
     resolved = db.Column(db.Boolean, default=False, nullable=False)
+    comment = db.Column(db.Text(), nullable=True)
 
+audit_employee_trig = DDL('''/
+CREATE TRIGGER Employee
+AFTER DELETE
+    ON employee
+    FOR EACH ROW
+EXECUTE  PROCEDURE AuditEmployee();
+
+''')
+audit_employee_func = DDL(
+    '''/
+    CREATE OR REPLACE FUNCTION AuditEmployee()
+    RETURNS TRIGGER
+    LANGUAGE PLPGSQL
+    AS
+    $$
+    BEGIN
+		 INSERT INTO employee_audit(trn, first_name, last_name, street_num, street_name, city, parish, auditor,"date deleted")
+		 VALUES(old.trn,old.first_name,old.last_name,old.street_num,old.street_name,old.city,old.parish,old.auditor,now());
+	RETURN NEW;
+    END;
+    $$;
+    '''
+)
+
+
+audit_regemployee_trig = DDL(
+    '''/
+    CREATE TRIGGER RegEmployee
+    AFTER DELETE
+    ON reg_employee
+    FOR EACH ROW
+    EXECUTE  PROCEDURE AuditRegEmployee();  
+    '''
+)
+
+audit_regemployee_func = DDL(
+    '''/
+    CREATE OR REPLACE FUNCTION AuditRegEmployee()
+    RETURNS TRIGGER
+    LANGUAGE PLPGSQL
+    AS
+    $$
+    BEGIN
+		 INSERT INTO reg_employee_audit(fk_trn, hiring_date, yearly_salary,date_deleted)
+		 VALUES(old.fk_trn,old.hiring_date,old.yearly_salary,now());
+	RETURN NEW;
+    END
+    $$;
+    '''
+)
+audit_tempemployee_trig = DDL(
+    '''/
+    CREATE TRIGGER TempEmployee
+    AFTER DELETE
+    ON temp_employee
+    FOR EACH ROW
+    EXECUTE  PROCEDURE AuditRegEmployee();
+    '''
+)
+
+audit_tempemployee_func = DDL(
+    '''
+    CREATE OR REPLACE FUNCTION AuditTempEmployee()
+    RETURNS TRIGGER
+    LANGUAGE PLPGSQL
+    AS
+    $$
+    BEGIN
+		 INSERT INTO temp_employee_audit(fk_trn, hr_wage, contract_description,date_deleted)
+		 VALUES(old.fk_trn,old.hr_wage,old.contract_description,old.now());
+	RETURN NEW;
+    END
+    $$;
+
+    '''
+)
+
+audit_phone_trig = DDL(
+    '''/
+    CREATE TRIGGER Phone
+    AFTER DELETE
+    ON phone
+    FOR EACH ROW
+    EXECUTE  PROCEDURE AuditPhone();
+'''
+)
+
+audit_phone_func = DDL(
+    '''/
+    CREATE OR REPLACE FUNCTION AuditPhone()
+    RETURNS TRIGGER
+    LANGUAGE PLPGSQL
+    AS
+    $$
+    BEGIN
+		 INSERT INTO phone_audit(fk_trn, phone_number,date_deleted)
+		 VALUES(old.fk_trn,old.phone_number,now());
+	RETURN NEW;
+    END
+    $$;
+    '''
+)
+
+
+audit_job_trig = DDL(
+    '''/
+    CREATE TRIGGER Job
+    AFTER DELETE
+    ON job
+    FOR EACH ROW
+    EXECUTE  PROCEDURE AuditJob();
+    '''
+)
+
+audit_job_func = DDL(
+    '''/
+    CREATE OR REPLACE FUNCTION AuditJob()
+    RETURNS TRIGGER
+    LANGUAGE PLPGSQL
+    AS
+    $$
+    BEGIN
+		 INSERT INTO job_audit(ref_number, job_start_date, job_end_date, street_num, street_name, city, parish, description,fk_supervisor,fk_job,date_deleted)
+		 VALUES(old.ref_number,old.job_start_date,old.job_end_date,old.street_num,old.street_name,old.city,old.parish,old.description,old.fk_supervisor,old.fk_job,now());
+	RETURN NEW;
+    END
+    $$;
+    '''
+)
+
+audit_assigned_trig= DDL(
+    '''/
+    CREATE TRIGGER Assigned
+    AFTER DELETE
+    ON Assigned
+    FOR EACH ROW
+    EXECUTE  PROCEDURE AuditAssigned();
+    '''
+)
+
+audit_assigned_func= DDL(
+    '''/
+    CREATE OR REPLACE FUNCTION AuditAssigned()
+    RETURNS TRIGGER
+    LANGUAGE PLPGSQL
+    AS
+    $$
+    BEGIN
+		 INSERT INTO assigned_audit(fk_employee, fk_job, date_assigned, start_date, end_date, date_deleted)
+		 VALUES(old.fk_employee,old.fk_job,old.date_assigned,old.start_date,old.end_date,now());
+	RETURN NEW;
+    END
+    $$;
+    '''
+)
+
+audit_complaint_trig = DDL(
+    '''/
+    CREATE TRIGGER Complaint
+    AFTER DELETE
+    ON complaint
+    FOR EACH ROW
+    EXECUTE  PROCEDURE AuditComplaint();
+    '''
+)
+
+audit_complaint_func = DDL(
+    '''/
+    CREATE OR REPLACE FUNCTION AuditComplaint()
+    RETURNS TRIGGER
+    LANGUAGE PLPGSQL
+    AS
+    $$
+    BEGIN
+		 INSERT INTO complaint_audit(fk_resident, fk_job, date, content, resolved, comment, date_deleted)
+		 VALUES(old.fk_resident,old.fk_job,old.date,old.content,old.resolved,comment,now());
+	RETURN NEW;
+    END
+    $$;
+    '''
+)
 
 @login_manager.user_loader
 def user_loader(id):
@@ -143,3 +326,11 @@ def request_loader(request):
     trn = request.form.get('trn')
     user = Users.query.filter_by(id=trn).first()
     return user if user else None
+
+event.listen(Employee,"after_delete", audit_employee_trig)
+event.listen(RegEmployee,"after_delete", audit_regemployee_trig)
+event.listen(TempEmployee,"after_delete", audit_tempemployee_trig)
+event.listen(Phone,"after_delete", audit_phone_trig)
+event.listen(Job,"after_delete", audit_job_trig)
+event.listen(Assigned,"after_delete", audit_assigned_trig) 
+event.listen(Complaint,"after_delete", audit_complaint_trig)

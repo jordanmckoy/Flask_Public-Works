@@ -1,3 +1,6 @@
+
+import random
+from flask_mail import Message
 from flask import render_template, redirect, request, url_for
 from flask_login import (
     current_user,
@@ -5,12 +8,11 @@ from flask_login import (
     logout_user
 )
 
-from app import db, login_manager
+from app import db, login_manager, mail
 from app.auth import blueprint
-from app.auth.forms import LoginForm, CreateAccountForm
+from app.auth.forms import LoginForm, CreateAccountForm, OtpForm
 from app.models import Users,Employee
 from app.auth.util import verify_pass
-import sys
 
 # Login & Registration
 
@@ -40,6 +42,7 @@ def login():
     if not current_user.is_authenticated:
         return render_template('auth/login.html',
                                form=login_form)
+
     return redirect(url_for('employee_blueprint.employee_index'))
 
 
@@ -87,11 +90,61 @@ def register():
     else:
         return render_template('auth/register.html', form=create_account_form)
 
+@blueprint.route('/auth/manager/login', methods=['GET','POST'])
+def manager_login():
+    login_form = LoginForm(request.form)
+    if 'login' in request.form:
+
+        # read form data
+        form_id = request.form['trn']
+        password = request.form['password']
+
+        # Locate user
+        user = Users.query.filter_by(id=form_id).first()
+
+        # Check the password
+        if user and verify_pass(password, user.password):
+            if user.manager == False:
+                return render_template('auth/manager-login.html',msg='This account is not authorized',form=login_form)
+            return redirect(url_for('auth_blueprint.otp_verify',email=user.email))
+
+        # Something (user or pass) is not ok
+        return render_template('auth/manager-login.html',
+                               msg='Wrong user or password',
+                               form=login_form)
+
+    if not current_user.is_authenticated:
+        return render_template('auth/manager-login.html',
+                               form=login_form)
+
+    return redirect(url_for('manager_blueprint.manager'))
+
+
+@blueprint.route('/auth/otp/<string:email>', methods=['GET','POST'])
+def otp_verify(email):
+    form = OtpForm(request.form)
+    global otp
+    if request.method == 'POST':
+        user = Users.query.filter_by(email=email).first()
+        form_otp = int(request.form['otp'])
+        if form_otp == otp:
+            login_user(user)
+            return redirect(url_for('manager_blueprint.manager'))
+        else:
+            return render_template('auth/otp.html',msg='Wrong OTP a New OTP Has Been Sent',form = form)
+
+    otp = random.randint(100000,999999)
+    mail.connect()
+    msg = Message('Your One Time Password',sender='noreply@publicworks.com', recipients=[email])
+    msg.body = f'Your OTP IS {otp}'
+    mail.send(msg)
+    return render_template('auth/otp.html',form = form)
+    
 
 @blueprint.route('/auth/logout')
 def logout():
     logout_user()
-    return redirect(url_for('auth_blueprint.login'))
+    return redirect(url_for('user_blueprint.index'))
 
 
 # Errors

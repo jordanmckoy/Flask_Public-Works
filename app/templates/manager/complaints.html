@@ -63,6 +63,10 @@
                         <td>
                             <a class="btn btn-primary" href="{{url_for('manager_blueprint.view_complaints', id=complaint.fk_job, resident=complaint.fk_resident,date=complaint.date)}}" role="button">View Complaint</a>
                             <a class="btn btn-primary" href="{{url_for('manager_blueprint.view_jobs', id=complaint.fk_job)}}" role="button">View Job</a>
+                            {%if complaint.resolved%}
+                            {%else%}
+                                <a class="btn btn-primary" href="{{url_for('manager_blueprint.resolve_complaints',job=complaint.fk_job, resident=complaint.fk_resident,date=complaint.date)}}" role="button">Resolve Complaint</a>
+                            {%endif%}
                         </td>
                       </tr>
                       <!-- End of Item -->

@@ -109,6 +109,7 @@ def supervisor_portal():
         return render_template('employee/supervisor.html', msg='You are not currently a supervisor', job=job, segment='Supervisor Portal')
 
 
+
 @blueprint.errorhandler(403)
 def access_forbidden(error):
     return render_template('error/page-403.html'), 403

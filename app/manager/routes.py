@@ -1,16 +1,18 @@
+import random
 from flask_mail import Message
 from flask_wtf import FlaskForm
 from sqlalchemy import false
+from app.auth.forms import OtpForm
 from app.manager import blueprint
 from flask import redirect, render_template, request, url_for
 from flask_login import login_required
 from app.models import Complaint, Employee, Assigned, TempEmployee, RegEmployee, Phone, Job, Users
 from flask_login import current_user
-from app import db
+from app import db, mail
 from wtforms import DateField, RadioField
 from wtforms.validators import DataRequired
-from app.manager.forms import CreateEmployee, CreateJob, EndJob, PromoteRegularForm, PromoteTemporaryForm
-
+from app.manager.forms import CreateEmployee, CreateJob, EndJob, PromoteRegularForm, PromoteTemporaryForm, ResolveComplaint
+from sqlalchemy.sql import text
 
 @blueprint.route('/manager/dashboard')
 @login_required
@@ -21,9 +23,10 @@ def manager():
         employee = Employee.query.filter(Employee.trn != None).all()
         employee_count = Employee.query.count()
         job_count = Job.query.filter_by(job_end_date=None).count()
-        complaint_count = Complaint.query.filter_by(resolved=0).count()
+        complaint = Complaint.query.filter(Complaint.resolved == False).all()
+        complaint_count = Complaint.query.filter_by(resolved= False).count()
         job = Job.query.filter(Job.job_end_date == None).all()
-        return render_template('manager/dashboard.html', segment='dashboard', limit=limit, job=job, employee_count=employee_count, job_count=job_count, complaint_count=complaint_count, employee=employee)
+        return render_template('manager/dashboard.html', segment='dashboard', limit=limit, job=job,complaint=complaint, employee_count=employee_count, job_count=job_count, complaint_count=complaint_count, employee=employee)
     else:
         return redirect(url_for('employee_blueprint.employee_index'))
 
@@ -194,7 +197,7 @@ def view_temporary_employee(trn):
         city = employee.city
         parish = employee.parish
         auditor = employee.auditor
-        hr_wage = int(tempemployee.hr_wage)
+        hr_wage = tempemployee.hr_wage
         contract = tempemployee.contract_description
         phone = Phone.query.filter(Phone.fk_trn == trn)
         if email:
@@ -204,18 +207,56 @@ def view_temporary_employee(trn):
     else:
         return redirect(url_for('employee_blueprint.employee_index'))
 
+@blueprint.route('/auth/otp/delete-employee/<string:trn>', methods=['GET','POST'])
+def otp_verify_employee(trn):
+    form = OtpForm(request.form)
+    global otp
+    if request.method == 'POST':
+        
+        form_otp = int(request.form['otp'])
+        if form_otp == otp:
+            user_to_delete = Employee.query.filter_by(trn=trn).delete()
+            db.session.commit()
+            return redirect(url_for('manager_blueprint.manage_employees'))
+        else:
+            return render_template('auth/otp.html',msg='Wrong OTP a New OTP Has Been Sent',form = form)
 
-@ blueprint.route('/manager/delete-employee/<string:trn>')
-@ login_required
-def delete_employee(trn):
-    user = Users.query.filter_by(id=current_user.id).first()
-    if user.manager == True:
-        user_to_delete = Employee.query.filter_by(trn=trn).first()
-        db.session.delete(user_to_delete)
-        db.session.commit()
-        return redirect(url_for('manager_blueprint.manage_employees'))
-    else:
-        return redirect(url_for('manager_blueprint.employee_index'))
+    otp = random.randint(100000,999999)
+    mail.connect()
+    msg = Message('Your One Time Password',sender='noreply@publicworks.com', recipients=[current_user.email])
+    msg.body = f'Your OTP IS {otp}'
+    mail.send(msg)
+    return render_template('auth/otp.html',form = form)
+    
+@blueprint.route('/auth/otp/delete-job/<string:id>', methods=['GET','POST'])
+def otp_verify_job(id):
+    form = OtpForm(request.form)
+    global otp
+    if request.method == 'POST':
+        user = Users.query.filter_by(email=current_user.email).first()
+        form_otp = int(request.form['otp'])
+        if form_otp == otp:
+            job_to_delete = Job.query.filter_by(ref_number=id).delete()
+            db.session.commit()
+            return redirect(url_for('manager_blueprint.manage_jobs'))
+        else:
+            return render_template('auth/otp.html',msg='Wrong OTP a New OTP Has Been Sent',form = form)
+    otp = random.randint(100000,999999)
+    mail.connect()
+    msg = Message('Your One Time Password',sender='noreply@publicworks.com', recipients=[current_user.email])
+    msg.body = f'Your OTP IS {otp}'
+    mail.send(msg)
+    return render_template('auth/otp.html',form = form)
+    
+# @ blueprint.route('/manager/delete-employee/<string:trn>')
+# @ login_required
+# def delete_employee(trn):
+#     user = Users.query.filter_by(id=current_user.id).first()
+#     if user.manager == True:
+        
+#         return redirect(url_for('manager_blueprint.manage_employees'))
+#     else:
+#         return redirect(url_for('manager_blueprint.employee_index'))
 
 
 @ blueprint.route('/manager/add-employees/temporary', methods=['GET', 'POST'])
@@ -409,17 +450,17 @@ def addjobs():
         return redirect(url_for('employee_blueprint.employee_index'))
 
 
-@ blueprint.route('/manager/delete-job/<string:id>')
-@ login_required
-def delete_job(id):
-    user = Users.query.filter_by(id=current_user.id).first()
-    if user.manager == True:
-        job_to_delete = Job.query.filter_by(ref_number=id).first()
-        db.session.delete(job_to_delete)
-        db.session.commit()
-        return redirect(url_for('employee_blueprint.manage_jobs'))
-    else:
-        return redirect(url_for('employee_blueprint.employee_index'))
+# @ blueprint.route('/manager/delete-job/<string:id>')
+# @ login_required
+# def delete_job(id):
+#     user = Users.query.filter_by(id=current_user.id).first()
+#     if user.manager == True:
+#         job_to_delete = Job.query.filter_by(ref_number=id).first()
+#         db.session.delete(job_to_delete)
+#         db.session.commit()
+#         return redirect(url_for('employee_blueprint.manage_jobs'))
+#     else:
+#         return redirect(url_for('employee_blueprint.employee_index'))
 
 
 @ blueprint.route('/manager/end-job/<string:id>', methods=['GET', 'POST'])
@@ -495,7 +536,24 @@ def view_complaints(id, resident, date):
         return render_template('manager/view-complaints.html', job=job, date=date, resident=resident, complaint=complaint, segment='complaints')
     else:
         return redirect(url_for('employee_blueprint.employee_index'))
-
+@ blueprint.route('/manager/<string:job>/<string:resident>/<string:date>', methods=['GET', 'POST'])
+@ login_required
+def resolve_complaints(job,resident,date):
+    user = Users.query.filter_by(id=current_user.id).first()
+    if user.manager == True:
+        form = ResolveComplaint(request.form)
+        if 'add' in request.form:
+            comment = request.form['comment']
+            resolve = Complaint.query.filter_by(fk_resident=resident,fk_job=job,date=date).update(
+                dict(resolved=True, comment=comment))
+            db.session.commit()
+            msg = Message('A manager has marked your complaint',sender='noreply@publicworks.com', recipients=[resident])
+            msg.body = f'Good day, Your Complaint about {job} made on {date} has been resolved. Comments: {comment}'
+            mail.send(msg)
+            return redirect(url_for('manager_blueprint.manage_complaints'))
+        return render_template('manager/resolve-complaints.html', form=form, segment='complaint')
+    else:
+        return redirect(url_for('employee_blueprint.employee_index'))
 
 @blueprint.errorhandler(403)
 def access_forbidden(error):

@@ -106,7 +106,7 @@
         <div class="col-12 col-xxl-6 mb-4">
             <div class="card border-0 shadow">
                 <div class="card-header border-bottom d-flex align-items-center justify-content-between">
-                    <h2 class="fs-5 fw-bold mb-0">Current Jobs</h2>
+                    <h2 class="fs-5 fw-bold mb-0">Active Jobs</h2>
                     <a href="{{url_for('manager_blueprint.manage_jobs')}}" class="btn btn-sm btn-primary">See all</a>
                 </div>
                 <div class="card-body">
@@ -127,6 +127,39 @@
                                 </div>
                                 <div class="col text-end">
                                     <a href="{{url_for('manager_blueprint.view_jobs', id=jobs.ref_number)}}" class="btn btn-sm btn-secondary d-inline-flex align-items-center">
+                                        <svg class="icon icon-xxs me-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zM7 8H5v2h2V8zm2 0h2v2H9V8zm6 0h-2v2h2V8z" clip-rule="evenodd"></path></svg>
+                                        View
+                                    </a>
+                                </div>
+                            </div>
+                        </li>
+                        {%endfor%}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-xxl-6 mb-4">
+            <div class="card border-0 shadow">
+                <div class="card-header border-bottom d-flex align-items-center justify-content-between">
+                    <h2 class="fs-5 fw-bold mb-0">Complaints</h2>
+                    <a href="{{url_for('manager_blueprint.manage_complaints')}}" class="btn btn-sm btn-primary">See all</a>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush list my--3">
+                        {% for complaints in complaint[0:5] %}
+                        <li class="list-group-item px-0">
+                            <div class="row align-items-center">
+                                <div class="col-auto ms--2">
+                                    <h4 class="h6 mb-0">
+                                        <a href="#">Job ID: {{complaints.fk_job}} </a>
+                                    </h4>
+                                    <div class="d-flex align-items-center">
+                                        <medium>Date:{{complaints.date}}</medium>
+                                    </div>
+                                </div>
+                                
+                                <div class="col text-end">
+                                    <a href="{{url_for('manager_blueprint.view_complaints', id=complaints.fk_job, resident=complaints.fk_resident, date=complaints.date)}}" class="btn btn-sm btn-secondary d-inline-flex align-items-center">
                                         <svg class="icon icon-xxs me-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zM7 8H5v2h2V8zm2 0h2v2H9V8zm6 0h-2v2h2V8z" clip-rule="evenodd"></path></svg>
                                         View
                                     </a>

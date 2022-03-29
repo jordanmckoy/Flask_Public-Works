@@ -28,9 +28,17 @@
         <div class="row">
           <div class="col-md-6 mb-3">
             <div class="form-group">
-              <label for="email">Email</label>
+              <label for="email_address">Email</label>
               {{form.email_address(class="form-control",type="email",
               placeholder="name@example.com") }}
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <div class="form-group">
+              <label for="date">Date</label>
+              {{form.date(class="form-control",type="date") }}
             </div>
           </div>
         </div>
@@ -38,14 +46,14 @@
         <div class="row">
           <div class="col-sm-3 mb-3">
             <div class="form-group">
-              <label for="number">Street Number</label>
+              <label for="street_number">Street Number</label>
               {{
               form.street_number(type="number",class="form-control",placeholder="Street Number" ) }}
             </div>
           </div>
           <div class="col-sm-9 mb-3">
             <div class="form-group">
-              <label for="address">Street Name</label>
+              <label for="street_name">Street Name</label>
               {{ form.street_name(type="text",
               class="form-control",placeholder="Street Name" ) }}
             </div>
@@ -67,12 +75,12 @@
           <h2 class="h5 my-4">Complaint Content</h2>
           <div class="col-sm-3 mb-3">
             <div class="form-group">
-              <label for="number">Job ID</label>
+              <label for="job_id">Job ID</label>
               {{ form.job_id(type="number",class="form-control",placeholder="Job ID" ) }}
             </div>
           </div>
           <div class="my-4">
-            <label for="textarea"> Content </label>
+            <label for="complaint"> Content </label>
             {{ form.complaint(class="form-control", placeholder="Enter your complaint...", id="textarea", rows="4" )}}
           </div>
         </div>
@@ -82,31 +90,6 @@
           </button>
         </div>
       </form>
-    </div>
-    <div class="card card-body border-0 shadow mb-4 mb-xl-0">
-      <h2 class="h5 mb-4">Alerts & Notifications</h2>
-      <ul class="list-group list-group-flush">
-        <li
-          class="list-group-item d-flex align-items-center justify-content-between px-0 border-bottom"
-        >
-          <div>
-            <h3 class="h6 mb-1">Company News</h3>
-            <p class="small pe-4">
-              Get Rocket news, announcements, and product updates
-            </p>
-          </div>
-          <div>
-            <div class="form-check form-switch">
-              <input
-                class="form-check-input"
-                type="checkbox"
-                id="user-notification-1"
-              />
-              <label class="form-check-label" for="user-notification-1"></label>
-            </div>
-          </div>
-        </li>
-      </ul>
     </div>
   </div>
 </div>

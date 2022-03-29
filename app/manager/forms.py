@@ -1,4 +1,6 @@
 
+from tokenize import String
+from xml.etree.ElementTree import Comment
 from flask_wtf import FlaskForm
 from wtforms import StringField, DateField, PasswordField, SubmitField, StringField, DecimalField, IntegerField
 from wtforms.validators import DataRequired, Email
@@ -61,7 +63,9 @@ class CreateJob(FlaskForm):
     original_job = StringField(
         'original job', id='job_description')
 
-
+class ResolveComplaint(FlaskForm):
+    comment = StringField('comment', id='managers_comment', validators=[DataRequired()])
+    
 class EndJob(FlaskForm):
     end_date = DateField('end_date', validators=[DataRequired()])
     # Password recovery form
