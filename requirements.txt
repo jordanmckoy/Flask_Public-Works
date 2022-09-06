@@ -12,4 +12,5 @@ jinja2
 flask-restx
 psycopg2-binary
 flask-mail
+python-dotenv
 connexion
